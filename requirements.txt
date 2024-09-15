@@ -5,3 +5,8 @@ sqlalchemy
 pymongo
 matplotlib
 seaborn
+streamlit
+streamlit-autorefresh
+faker
+pymysql
+cryptography
