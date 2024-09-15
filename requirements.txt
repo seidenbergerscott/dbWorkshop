@@ -1,0 +1,7 @@
+pandas
+psycopg2-binary
+mysql-connector-python
+sqlalchemy
+pymongo
+matplotlib
+seaborn
