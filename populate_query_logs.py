@@ -1,5 +1,3 @@
-# populate_query_logs.py
-
 import time
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -101,10 +99,11 @@ def execute_postgres_query(dataset, query_complexity, params):
                         p.category,
                         p.color,
                         AVG(r.rating) as average_rating,
-                        AVG(p.price) as average_price
+                        AVG(p.price) as average_price,
+                        COUNT(r.review_id) as total_reviews
                     FROM
                         products p
-                    JOIN
+                    LEFT JOIN
                         reviews r ON p.product_id = r.product_id
                     WHERE
                         p.price BETWEEN :price_min AND :price_max

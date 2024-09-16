@@ -152,7 +152,7 @@ def get_mongo_stats():
 def query_mongo(collection, query_complexity, filters):
     st.write(f"Querying MongoDB collection '{collection}' with complexity '{query_complexity}'...")
     if collection == 'census_data':
-        # Extract filters
+        # Extract filters for Census data
         age_min = filters['age_min']
         age_max = filters['age_max']
         income_threshold = filters['income_threshold']
@@ -190,6 +190,7 @@ def query_mongo(collection, query_complexity, filters):
             ]
         result = list(mongo_census_collection.aggregate(pipeline))
     elif collection == 'products':
+        # Extract filters for E-commerce data
         price_min = filters['price_min']
         price_max = filters['price_max']
         categories = filters['categories']
@@ -325,6 +326,7 @@ with tab1:
             elif data_source == "PostgreSQL":
                 st.write("Executing query on PostgreSQL...")
                 if dataset == "Census Data":
+                    # Existing queries for Census data remain largely the same.
                     # Build SQL Query for Census Data
                     if query_complexity == "Simple":
                         query = text("""
@@ -362,7 +364,7 @@ with tab1:
                     }
                     result_df = load_data_db(query, params)
                 else:
-                    # Build SQL Query for E-commerce Data
+                    # Updated queries to align with the new e-commerce data:
                     if query_complexity == "Simple":
                         query = text("""
                             SELECT category, AVG(price) as average_price
@@ -391,16 +393,17 @@ with tab1:
                         }
                         result_df = load_data_db(query, params)
                     else:  # Complex
-                        # Implement complex query for E-commerce data in PostgreSQL
+                        # Complex joins involving JSON fields and nested data
                         query = text("""
                             SELECT
                                 p.category,
                                 p.color,
                                 AVG(r.rating) as average_rating,
-                                AVG(p.price) as average_price
+                                AVG(p.price) as average_price,
+                                COUNT(r.review_id) as total_reviews
                             FROM
                                 products p
-                            JOIN
+                            LEFT JOIN
                                 reviews r ON p.product_id = r.product_id
                             WHERE
                                 p.price BETWEEN :price_min AND :price_max
